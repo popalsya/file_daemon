@@ -1,6 +1,7 @@
 import flask
 import hashlib
 import os
+import re
 
 from flask import Flask, jsonify, request, send_file
 
@@ -16,6 +17,9 @@ def get():
         raise RuntimeError("hash required")
 
     hash = request.args.get("hash")
+
+    if re.match(r'^[0-9a-f]*$', hash) is None:
+        raise RuntimeError("provided hash is not valid, must be hex")
 
     folder_name = hash[0:2]
     file_path = os.path.join(STORAGE_DIRECTORY, folder_name, hash)
@@ -71,6 +75,9 @@ def delete():
         raise RuntimeError("hash required")
 
     hash = request.args.get("hash")
+
+    if re.match(r'^[0-9a-f]*$', hash) is None:
+        raise RuntimeError("provided hash is not valid, must be hex")
 
     dir_path = os.path.join(STORAGE_DIRECTORY, hash[0:2])
     file_path = os.path.join(dir_path, hash)
